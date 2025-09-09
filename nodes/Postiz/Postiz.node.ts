@@ -813,15 +813,17 @@ export class Postiz implements INodeType {
 
 				returnData.push(...executionData);
 			} catch (error) {
-				// if (this.continueOnFail()) {
-				const executionErrorData = this.helpers.constructExecutionMetaData(
-					this.helpers.returnJsonArray({ error: error?.description || error?.message || error }),
-					{ itemData: { item: i } },
-				);
-				returnData.push(...executionErrorData);
-				// continue;
-				// }
-				// throw error;
+				if (this.continueOnFail()) {
+					// Continue processing other items, add error info to results
+					const executionErrorData = this.helpers.constructExecutionMetaData(
+						this.helpers.returnJsonArray({ error: error?.description || error?.message || error }),
+						{ itemData: { item: i } },
+					);
+					returnData.push(...executionErrorData);
+					continue;
+				}
+				// If continueOnFail is false, throw the error to stop execution
+				throw error;
 			}
 		}
 
