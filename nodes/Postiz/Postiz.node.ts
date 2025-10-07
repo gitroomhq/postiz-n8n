@@ -585,7 +585,6 @@ export class Postiz implements INodeType {
 				displayOptions: {
 					show: {
 						operation: ['uploadFile'],
-						useBinaryData: [true],
 					},
 				},
 				default: '',
@@ -727,10 +726,7 @@ export class Postiz implements INodeType {
 					const dataBuffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
 					const mimeType = binaryData.mimeType || 'application/octet-stream';
 
-					if (
-						!dataBuffer ||
-						!binaryData
-					) {
+					if (!dataBuffer || !binaryData) {
 						throw new NodeOperationError(
 							this.getNode(),
 							`Item is not of type "binary" or does not contain the expected properties: data, mimeType, fileName`,
