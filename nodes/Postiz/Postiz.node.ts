@@ -585,6 +585,7 @@ export class Postiz implements INodeType {
 				displayOptions: {
 					show: {
 						operation: ['uploadFile'],
+						useBinaryData: [true],
 					},
 				},
 				default: '',
