@@ -721,12 +721,14 @@ export class Postiz implements INodeType {
 				}
 
 				if (operation === 'uploadFile') {
-					const dataBinary = this.getNodeParameter('binaryProperty', i, 'data') as any;
+					const binaryPropertyName = this.getNodeParameter('binaryProperty', i) as any;
+					const binaryData = this.helpers.assertBinaryData(i, binaryPropertyName);
+					const dataBuffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
+					const mimeType = binaryData.mimeType || 'application/octet-stream';
+
 					if (
-						!dataBinary?.data ||
-						!dataBinary.data.data ||
-						!dataBinary.data.mimeType ||
-						!dataBinary.data.fileName
+						!dataBuffer ||
+						!binaryData
 					) {
 						throw new NodeOperationError(
 							this.getNode(),
@@ -735,12 +737,12 @@ export class Postiz implements INodeType {
 						);
 					}
 
-					const blob = new Blob([Buffer.from(dataBinary.data.data, 'base64')], {
-						type: dataBinary.data.mimeType,
+					const blob = new Blob([dataBuffer], {
+						type: mimeType,
 					});
 
 					const formData = new FormData();
-					formData.append('file', blob, dataBinary.data.fileName);
+					formData.append('file', blob, binaryData.fileName);
 					responseData = await postizApiRequest.call(this, 'POST', '/upload', formData);
 				}
 
